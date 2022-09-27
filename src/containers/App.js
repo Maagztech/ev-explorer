@@ -1,1 +1,42 @@
-import React, {Component} from 'react';import './App.css';import axios from 'axios';import MyMapComponent from '../components/MyMapComponent'class App extends Component {    state = {        stations: []    };    componentDidMount() {        this.getStations();    }    getStations = () => {        const endPoint = "https://api.virta.fi/v4/stations?limit=100&status"; //limited to first 100 stations        axios            .get(endPoint).then(({data}) => {            this.setState({stations: data})        })            .catch(error => {                console.log("ERROR: " + error)            })    };    render() {        console.log(this.state.stations);        return (            <main>                <MyMapComponent                    googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAAHhlH1VNV94TBEO4wLnaJvNaw5r6W9sk"                    loadingElement={<div style={{height: `100%`}}/>}                    containerElement={<div style={{height: `100%`}}/>}                    mapElement={<div style={{height: `100%`}}/>}                    markers={this.state.stations}                />            </main>        );    }}export default App;
+import React, { Component } from 'react';
+import './App.css';
+import axios from 'axios';
+import MyMapComponent from '../components/MyMapComponent'
+
+class App extends Component {
+    state = {
+        stations: []
+    };
+
+    componentDidMount() {
+        this.getStations();
+    }
+
+    getStations = () => {
+        const endPoint = "https://api.tomtom.com/search/2/search/EV%20Charging.json?lat=19.0760&lon=72.8777&key=H4Xi5KJCFuXARU2yZGnIGh8GIuwPVr2i&limit=100";
+        axios
+            .get(endPoint).then(({ data }) => {
+                this.setState({ stations: data.results })
+            })
+            .catch(error => {
+                console.log("ERROR: " + error)
+            })
+    };
+
+    render() {
+        console.log(this.state.stations);
+        return (
+            <main>
+                <MyMapComponent
+                    googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAnRKbnDfJAymwgwlktMhqz271Zms1jbjM"
+                    loadingElement={<div style={{ height: `100%` }} />}
+                    containerElement={<div style={{ height: `100%` }} />}
+                    mapElement={<div style={{ height: `100%` }} />}
+                    markers={this.state.stations}
+                />
+            </main>
+        );
+    }
+}
+
+export default App;
