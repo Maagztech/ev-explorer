@@ -1,8 +1,7 @@
 import React, { Component, useEffect, useState } from 'react';
 import './App.css';
 import axios from 'axios';
-import MyMapComponent from '../components/MyMapComponent'
-import Search from '../components/Search';
+import MyMapComponent from '../components/MyMapComponent';
 
 const App = () => {
     const [City, setCity] = useState("");
