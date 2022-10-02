@@ -17,13 +17,13 @@ const App = () => {
                 document.getElementById("offc").click();
         }
 
-        const mapbox = `https://api.mapbox.com/geocoding/v5/mapbox.places/${Area ? Area : "Los angeles"},${City}.json?access_token=pk.eyJ1IjoiMjBlYzMwMTQiLCJhIjoiY2w4cWVxZWpwMDBtcTN2bnVlaTFha3JnMyJ9.DbGM6Pj7J_B8UnOFaJDzCQ&limit=1`;
+        const mapbox = `https://api.mapbox.com/geocoding/v5/mapbox.places/${Area ? Area : "New York"},${City}.json?access_token=pk.eyJ1IjoiMjBlYzMwMTQiLCJhIjoiY2w4cWVxZWpwMDBtcTN2bnVlaTFha3JnMyJ9.DbGM6Pj7J_B8UnOFaJDzCQ&limit=1`;
         axios
             .get(mapbox).then(({ data }) => {
                 console.log(data)
                 setLat(data.features[0].center[1]);
                 setLon(data.features[0].center[0]);
-                const tomtom = "https://api.tomtom.com/search/2/search/EV%20Charging.json?lat=" + data.features[0].center[1] + "&lon=" + data.features[0].center[0] + "&key=H4Xi5KJCFuXARU2yZGnIGh8GIuwPVr2i&limit=100";
+                const tomtom = `https://api.tomtom.com/search/2/search/EV%20Charging.json?lat=${data.features[0].center[1]}&lon=${data.features[0].center[0]}&key=H4Xi5KJCFuXARU2yZGnIGh8GIuwPVr2i&limit=${City ? "20" : "1"}`;
                 axios
                     .get(tomtom).then(({ data }) => {
                         console.log(data)
@@ -42,7 +42,6 @@ const App = () => {
 
     return (
         <>
-
             <div className="my-3 mx-auto row" style={{ maxWidth: 800 }}>
                 <h1 for="inputPassword" className='fs-4 fw-bold my-1 col'>Explore Chargers</h1>
                 <div class="input-group col my-1 text-light">
@@ -52,11 +51,11 @@ const App = () => {
                     </ul>
                     <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{Area ? Area : "Select Zone"}</button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item crsr" onClick={e => setArea(e.target.innerText)}>Zone1-Staten Island</a></li>
-                        <li><a class="dropdown-item crsr" onClick={e => setArea(e.target.innerText)}>Zone2-Brooklyn</a></li>
-                        <li><a class="dropdown-item crsr" onClick={e => setArea(e.target.innerText)}>Zone3-Manhattan</a></li>
-                        <li><a class="dropdown-item crsr" onClick={e => setArea(e.target.innerText)}>Zone4-Queens</a></li>
-                        <li><a class="dropdown-item crsr" onClick={e => setArea(e.target.innerText)}>Zone5-Bronx</a></li>
+                        <li><a class="dropdown-item crsr" onClick={e => setArea(e.target.innerText)}>Staten Island</a></li>
+                        <li><a class="dropdown-item crsr" onClick={e => setArea(e.target.innerText)}>Brooklyn</a></li>
+                        <li><a class="dropdown-item crsr" onClick={e => setArea(e.target.innerText)}>Manhattan</a></li>
+                        <li><a class="dropdown-item crsr" onClick={e => setArea(e.target.innerText)}>Queens</a></li>
+                        <li><a class="dropdown-item crsr" onClick={e => setArea(e.target.innerText)}>Bronx</a></li>
                     </ul>
                 </div>
             </div>
@@ -67,7 +66,7 @@ const App = () => {
                     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div class="offcanvas-body">
-                    <ul>
+                    <ul style={{ listStyleType: "none" }}>
                         {stations.map((charger) => (
                             <li key={charger.id}>
                                 {charger.poi.name}
@@ -77,14 +76,18 @@ const App = () => {
                     </ul>
                 </div>
             </div>
-            <main className='col'>
-                <MyMapComponent
-                    googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAnRKbnDfJAymwgwlktMhqz271Zms1jbjM"
-                    loadingElement={<div style={{ height: `100%` }} />}
-                    containerElement={<div style={{ height: `100%` }} />}
-                    mapElement={<div style={{ height: `100%` }} />}
-                    markers={stations}
-                />
+            <main>
+                {lat &&
+                    <MyMapComponent
+                        googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAnRKbnDfJAymwgwlktMhqz271Zms1jbjM"
+                        loadingElement={<div style={{ height: `100%` }} />}
+                        containerElement={<div style={{ height: `100%` }} />}
+                        mapElement={<div style={{ height: `100%` }} />}
+                        markers={stations}
+                        lat={lat}
+                        lon={lon}
+                    />
+                }
             </main>
         </>
     );
