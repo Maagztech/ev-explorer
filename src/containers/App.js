@@ -11,6 +11,7 @@ const App = () => {
     const [lon, setLon] = useState();
     const [l, setL] = useState(0);
     const [Divisons, setDivisons] = useState([]);
+    const [Number, setNumber] = useState(5);
     useEffect(() => {
         if (City) {
             setL(1);
@@ -23,7 +24,7 @@ const App = () => {
                 // console.log(data)
                 setLat(data.features[0].center[1]);
                 setLon(data.features[0].center[0]);
-                const tomtom = `https://api.tomtom.com/search/2/search/EV%20Charging.json?lat=${data.features[0].center[1]}&lon=${data.features[0].center[0]}&key=H4Xi5KJCFuXARU2yZGnIGh8GIuwPVr2i&limit=${City ? "50" : "1"}`;
+                const tomtom = `https://api.tomtom.com/search/2/search/EV%20Charging.json?lat=${data.features[0].center[1]}&lon=${data.features[0].center[0]}&key=H4Xi5KJCFuXARU2yZGnIGh8GIuwPVr2i&limit=${City ? Number : "1"}`;
                 axios
                     .get(tomtom).then((res) => {
                         console.log(res.data.results[0].chargingPark.connectors)
@@ -42,14 +43,17 @@ const App = () => {
         {
             city: "Mumbai,India",
             divison: ["Mira Bhayandar", "Kandiveli", "Goregaon", "Andheri", "Dadar", "Chembur", "Mulund West", "Thane"],
+            number: 6
         },
         {
             city: "New York,USA",
-            divison: ["Lakewood", "Ocean City", "Brighton Beach", "White Plains", "Manhattan", "Queens", "Farmingdale", "Greenport", "Riverhead", "Bridgehampton", "Bronx"]
+            divison: ["Lakewood", "Ocean City", "Brighton Beach", "White Plains", "Manhattan", "Queens", "Farmingdale", "Greenport", "Riverhead", "Bridgehampton", "Bronx"],
+            number: 30
         },
         {
             city: "Delhi,India",
-            divison: ["Bhiwadi", "Ghaziabad", "New Delhi", "Gurugram", "Faridabad", "Rohini", "Greater Noida", "Meerut", "Chandpur", "Sonipat"]
+            divison: ["Bhiwadi", "Ghaziabad", "New Delhi", "Gurugram", "Faridabad", "Rohini", "Greater Noida", "Meerut", "Chandpur", "Sonipat"],
+            number: 10
         },
 
     ]
@@ -65,6 +69,7 @@ const App = () => {
                             <li><p className="dropdown-item crsr" onClick={e => {
                                 setCity(citi.city)
                                 setDivisons(citi.divison)
+                                setNumber(citi.number)
                             }}>{citi.city}</p></li>
                         ))}
                     </ul>
