@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from "axios";
-import {InfoWindow, Marker} from "react-google-maps";
+import { InfoWindow, Marker } from "react-google-maps";
 
 class CustomMarker extends React.PureComponent {
     state = {
@@ -26,7 +26,7 @@ class CustomMarker extends React.PureComponent {
                 isLoading: true,
                 isOpen: true
             });
-            axios.get('https://api.virta.fi/v4/stations/' + this.props.data.id).then(({data}) => {
+            axios.get('https://api.virta.fi/v4/stations/' + this.props.data.id).then(({ data }) => {
                 this.setState({
                     savedInfo: data
                 });

@@ -1,15 +1,15 @@
 import React from 'react';
-import {GoogleMap, withGoogleMap, withScriptjs} from "react-google-maps";
+import { GoogleMap, withGoogleMap, withScriptjs } from "react-google-maps";
 import CustomMarker from "./CustomMarker";
 
-const MyMapComponent = withScriptjs(withGoogleMap(({markers}) =>
+const MyMapComponent = withScriptjs(withGoogleMap(({ markers }) =>
     <GoogleMap
-        defaultZoom={6}
-        defaultCenter={{lat: 48.157469, lng: 17.12937}}
+        defaultZoom={10}
+        defaultCenter={{ lat: 40.712776, lng: -74.005974 }}
     >
         {markers.map((station, key) => <CustomMarker data={station}
-                                                     position={{lat: station.position.lat, lng: station.position.lon}}
-                                                     key={key}/>)}
+            position={{ lat: [40.712776], lng: [-74.005974] }}
+            key={key} />)}
     </GoogleMap>
 ))
 
