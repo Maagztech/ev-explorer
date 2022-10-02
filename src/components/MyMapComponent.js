@@ -4,7 +4,7 @@ import CustomMarker from "./CustomMarker";
 
 const MyMapComponent = withScriptjs(withGoogleMap(({ markers, lat, lon }) =>
     < GoogleMap
-        defaultZoom={13}
+        defaultZoom={2}
         defaultCenter={{ lat: lat, lng: lon }}
     >
 

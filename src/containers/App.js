@@ -10,6 +10,7 @@ const App = () => {
     const [lat, setLat] = useState();
     const [lon, setLon] = useState();
     const [l, setL] = useState(0);
+    const [Divisons, setDivisons] = useState([]);
     useEffect(() => {
         if (City) {
             setL(1);
@@ -37,7 +38,21 @@ const App = () => {
             })
     }, [City, Area])
 
+    const Zones = [
+        {
+            city: "Mumbai,India",
+            divison: ["Mira Bhayandar", "Kandiveli", "Goregaon", "Andheri", "Dadar", "Chembur", "Mulund West", "Thane"],
+        },
+        {
+            city: "New York,USA",
+            divison: ["Lakewood", "Ocean City", "Brighton Beach", "White Plains", "Manhattan", "Queens", "Farmingdale", "Greenport", "Riverhead", "Bridgehampton", "Bronx"]
+        },
+        {
+            city: "Delhi,India",
+            divison: ["Bhiwadi", "Ghaziabad", "New Delhi", "Gurugram", "Faridabad", "Rohini", "Greater Noida", "Meerut", "Chandpur", "Sonipat"]
+        },
 
+    ]
 
     return (
         <>
@@ -46,15 +61,20 @@ const App = () => {
                 <div className="input-group col my-1 text-light">
                     <button className="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{City ? City : "Select City"}</button>
                     <ul className="dropdown-menu">
-                        <li><p className="dropdown-item crsr" onClick={e => setCity(e.target.innerText)}>New York, Ny, USA</p></li>
+                        {Zones.map((citi) => (
+                            <li><p className="dropdown-item crsr" onClick={e => {
+                                setCity(citi.city)
+                                setDivisons(citi.divison)
+                            }}>{citi.city}</p></li>
+                        ))}
                     </ul>
                     <button className="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{Area ? Area : "Select Zone"}</button>
                     <ul className="dropdown-menu dropdown-menu-end">
-                        <li><a className="dropdown-item crsr" onClick={e => setArea(e.target.innerText)}>Staten Island</a></li>
-                        <li><a className="dropdown-item crsr" onClick={e => setArea(e.target.innerText)}>Brooklyn</a></li>
-                        <li><a className="dropdown-item crsr" onClick={e => setArea(e.target.innerText)}>Manhattan</a></li>
-                        <li><a className="dropdown-item crsr" onClick={e => setArea(e.target.innerText)}>Queens</a></li>
-                        <li><a className="dropdown-item crsr" onClick={e => setArea(e.target.innerText)}>Bronx</a></li>
+                        {Divisons.map((divison) => (
+                            <li><p className="dropdown-item crsr" onClick={e => {
+                                setArea(divison)
+                            }}>{divison}</p></li>
+                        ))}
                     </ul>
                 </div>
             </div>

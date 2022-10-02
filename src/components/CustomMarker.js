@@ -6,7 +6,8 @@ class CustomMarker extends React.PureComponent {
     state = {
         isOpen: false,
         isLoading: false,
-        savedInfo: null
+        savedInfo: this.props.data,
+        charging: null
     };
 
     toggle = () => {
@@ -26,9 +27,10 @@ class CustomMarker extends React.PureComponent {
                 isLoading: true,
                 isOpen: true
             });
-            axios.get('https://api.virta.fi/v4/stations/' + this.props.data.id).then(({ data }) => {
+            axios.get('https://api.tomtom.com/search/2/chargingAvailability.json?chargingAvailability=' + this.props.data.id + "&key=wJcAL3mTPCGwaRo8UvyFJeePPT9Lx5Sv").then(({ data }) => {
+                console.log(data)
                 this.setState({
-                    savedInfo: data
+                    charging: data
                 });
                 this.setState({
                     isLoading: false
@@ -40,18 +42,6 @@ class CustomMarker extends React.PureComponent {
             });
         }
     };
-
-    getStatusText(status) {
-        if (status === 1) {
-            return "Available";
-        }
-        if (status === 2) {
-            return "Busy"
-        }
-
-        return "-";
-    }
-
     renderStatus() {
         if (this.state.isLoading) {
             return "Loading...";
@@ -62,13 +52,17 @@ class CustomMarker extends React.PureComponent {
 
         return <div>
             {
-                "Station: " + this.state.savedInfo.name
+                "Station: " + this.state.savedInfo.poi.name
             }
 
             {
-                this.state.savedInfo.evses.map((ev, key) => <div key={key}>
-                    EvCharger #{key + 1} {this.getStatusText(ev.status)}
-                </div>)
+                this.state.charging.connectors.map((ev, key) =>
+                    <div key={key}>
+                        Type #{key + 1} {ev.type}
+                        <br />
+                        <small className='mx-2'>Total: {ev.total}</small><br />
+                        <small className='mx-2'>Available: {ev.availability.current.available}</small>
+                    </div>)
             }
         </div>
     }
@@ -77,7 +71,7 @@ class CustomMarker extends React.PureComponent {
         return (
             <Marker position={this.props.position} onClick={this.onMarkerClickHandler}>
                 {(this.state.isOpen && <InfoWindow onCloseClick={this.toggle}>
-                    <div>
+                    <div className="text-dark">
                         {this.renderStatus()}
                     </div>
                 </InfoWindow>) || null}
