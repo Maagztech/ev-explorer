@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import axios from 'axios';
 import MyMapComponent from '../components/MyMapComponent';
@@ -21,13 +21,13 @@ const App = () => {
         axios
             .get(mapbox).then(({ data }) => {
                 console.log(data)
-                setLat(charger.features[0].center[1]);
-                setLon(charger.features[0].center[0]);
-                const tomtom = `https://api.tomtom.com/search/2/search/EV%20Charging.json?lat=${charger.features[0].center[1]}&lon=${charger.features[0].center[0]}&key=H4Xi5KJCFuXARU2yZGnIGh8GIuwPVr2i&limit=${City ? "20" : "1"}`;
+                setLat(data.features[0].center[1]);
+                setLon(data.features[0].center[0]);
+                const tomtom = `https://api.tomtom.com/search/2/search/EV%20Charging.json?lat=${data.features[0].center[1]}&lon=${data.features[0].center[0]}&key=H4Xi5KJCFuXARU2yZGnIGh8GIuwPVr2i&limit=${City ? "50" : "1"}`;
                 axios
                     .get(tomtom).then(({ data }) => {
                         console.log(data)
-                        setstations(charger.results)
+                        setstations(data.results)
                     })
                     .catch(error => {
                         console.log("ERROR: " + error)
@@ -62,14 +62,14 @@ const App = () => {
             <button class="btn btn-primary d-none" id='offc' type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions"></button>
             <div
                 className="offcanvas offcanvas-start"
-                data-bs-scroll="true"
+                data-bs-backdrop="false"
                 tabIndex={-1}
                 id="offcanvasWithBothOptions"
                 aria-labelledby="offcanvasWithBothOptionsLabel"
             >
                 <div className="offcanvas-header">
-                    <h5 className="offcanvas-title" id="offcanvasWithBothOptionsLabel">
-                        Notifications
+                    <h5 className="offcanvas-title text-dark" id="offcanvasWithBothOptionsLabel">
+                        <i className="fas fa-search-location"></i> {Area},{City}
                     </h5>
                     <button
                         type="button"
@@ -81,20 +81,40 @@ const App = () => {
                 <hr />
                 <div className="offcanvas-body">
                     <div className="list-group">
-                        {stations.map((charger) => (
-                            <a
-                                key={charger.id}
-                                href={charger.url ? charger.url : "#"}
-                                className="list-group-item list-group-item-action list-group-item-info mb-1"
-                                aria-current="true"
-                                style={{ backgroundColor: "whitesmoke" }}
-                            >
-                                <div className="d-flex w-100 justify-content-between">
-                                    <h6 className="mb-1 fw-bold text-dark"><i className="fas fa-angle-right"></i>{charger.poi.name}</h6>
-                                    {/* <small className='text-dark'>{timeAgo.format(new Date(charger.createdAt))}</small> */}
+                        {stations.length > 0 && stations.map((charger) => (
+
+                            <div className="w-100">
+                                <h6 className="mb-1 fw-bold text-dark"><i className="fas fa-charging-station"></i> {charger.poi.name}</h6>
+                                <div className='mx-3 mb-2'>
+                                    <small className='text-dark text-muted'><i className="fas fa-map-pin"></i>{' '}
+                                        {charger.address.streetNumber},
+                                        {charger.address.streetName},
+                                        {charger.address.municipalitySubdivision},
+                                        {charger.address.municipality}
+                                    </small><br />
+                                    <small className='text-dark text-muted'>
+                                        <i className="fas fa-globe-europe"></i>{' '}
+                                        {charger.poi.url}
+                                    </small><br />
+                                    <small className='text-dark text-muted'>
+                                        <i className="fas fa-mobile"></i>{' '}
+                                        {charger.poi.phone}
+                                    </small><br />
+                                    <div className='text-dark mx-3 d-flex' style={{ overflowX: "scroll" }}>
+                                        {
+                                            charger.chargingPark.connectors.map((locate) => (
+                                                <div className='shadow p-3 mb-3 mr-2 bg-body rounded'>
+                                                    <small className='fw-bold'>{locate.connectorType}</small><br />
+                                                    <small>Power-{locate.ratedPowerKW}KW</small><br />
+                                                    <small>{locate.voltageV}V,{locate.currentA}A,{locate.currentType}</small><br />
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
                                 </div>
-                                <p className="mb-1 text-muted">{charger.desc}</p>
-                            </a>
+                                {/* <p className="mb-1 text-muted">{charger.desc}</p> */}
+                            </div>
+
                         ))}
                     </div>
                 </div>
