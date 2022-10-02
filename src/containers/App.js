@@ -7,17 +7,36 @@ const App = () => {
     const [City, setCity] = useState("");
     const [Area, setArea] = useState("");
     const [stations, setstations] = useState([])
-    
+    const [lat, setLat] = useState();
+    const [lon, setLon] = useState();
+    const [l, setL] = useState(0);
     useEffect(() => {
-        const endPoint = "https://api.tomtom.com/search/2/search/EV%20Charging.json?lat=40.7127764&lon=-74.0059746&key=H4Xi5KJCFuXARU2yZGnIGh8GIuwPVr2i&limit=100";
+        if (City) {
+            setL(1);
+            if (l == 0)
+                document.getElementById("offc").click();
+        }
+
+        const mapbox = `https://api.mapbox.com/geocoding/v5/mapbox.places/${Area ? Area : "Los angeles"},${City}.json?access_token=pk.eyJ1IjoiMjBlYzMwMTQiLCJhIjoiY2w4cWVxZWpwMDBtcTN2bnVlaTFha3JnMyJ9.DbGM6Pj7J_B8UnOFaJDzCQ&limit=1`;
         axios
-            .get(endPoint).then(({ data }) => {
-                setstations(data.results)
+            .get(mapbox).then(({ data }) => {
+                console.log(data)
+                setLat(data.features[0].center[1]);
+                setLon(data.features[0].center[0]);
+                const tomtom = "https://api.tomtom.com/search/2/search/EV%20Charging.json?lat=" + data.features[0].center[1] + "&lon=" + data.features[0].center[0] + "&key=H4Xi5KJCFuXARU2yZGnIGh8GIuwPVr2i&limit=100";
+                axios
+                    .get(tomtom).then(({ data }) => {
+                        console.log(data)
+                        setstations(data.results)
+                    })
+                    .catch(error => {
+                        console.log("ERROR: " + error)
+                    })
             })
             .catch(error => {
                 console.log("ERROR: " + error)
             })
-    }, [])
+    }, [City, Area])
 
 
 
@@ -38,19 +57,24 @@ const App = () => {
                         <li><a class="dropdown-item crsr" onClick={e => setArea(e.target.innerText)}>Zone3-Manhattan</a></li>
                         <li><a class="dropdown-item crsr" onClick={e => setArea(e.target.innerText)}>Zone4-Queens</a></li>
                         <li><a class="dropdown-item crsr" onClick={e => setArea(e.target.innerText)}>Zone5-Bronx</a></li>
-                        <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item crsr" onClick={e => setArea(e.target.innerText)}>Explore Whole city</a></li>
                     </ul>
                 </div>
             </div>
-            <button class="btn btn-primary d-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">Enable body scrolling</button>
+            <button class="btn btn-primary d-none" id='offc' type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling"></button>
             <div class="offcanvas offcanvas-start text-dark bg-light" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
                 <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Offcanvas with body scrolling</h5>
+                    <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Chargers In the location</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div class="offcanvas-body">
-                    <p>Try scrolling the rest of the page to see this option in action.</p>
+                    <ul>
+                        {stations.map((charger) => (
+                            <li key={charger.id}>
+                                {charger.poi.name}
+                            </li>
+                        ))
+                        }
+                    </ul>
                 </div>
             </div>
             <main className='col'>
@@ -59,7 +83,7 @@ const App = () => {
                     loadingElement={<div style={{ height: `100%` }} />}
                     containerElement={<div style={{ height: `100%` }} />}
                     mapElement={<div style={{ height: `100%` }} />}
-                    markers={[]}
+                    markers={stations}
                 />
             </main>
         </>
