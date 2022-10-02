@@ -21,13 +21,13 @@ const App = () => {
         axios
             .get(mapbox).then(({ data }) => {
                 console.log(data)
-                setLat(data.features[0].center[1]);
-                setLon(data.features[0].center[0]);
-                const tomtom = `https://api.tomtom.com/search/2/search/EV%20Charging.json?lat=${data.features[0].center[1]}&lon=${data.features[0].center[0]}&key=H4Xi5KJCFuXARU2yZGnIGh8GIuwPVr2i&limit=${City ? "20" : "1"}`;
+                setLat(charger.features[0].center[1]);
+                setLon(charger.features[0].center[0]);
+                const tomtom = `https://api.tomtom.com/search/2/search/EV%20Charging.json?lat=${charger.features[0].center[1]}&lon=${charger.features[0].center[0]}&key=H4Xi5KJCFuXARU2yZGnIGh8GIuwPVr2i&limit=${City ? "20" : "1"}`;
                 axios
                     .get(tomtom).then(({ data }) => {
                         console.log(data)
-                        setstations(data.results)
+                        setstations(charger.results)
                     })
                     .catch(error => {
                         console.log("ERROR: " + error)
@@ -59,21 +59,44 @@ const App = () => {
                     </ul>
                 </div>
             </div>
-            <button class="btn btn-primary d-none" id='offc' type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling"></button>
-            <div class="offcanvas offcanvas-start text-dark bg-light" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Chargers In the location</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <button class="btn btn-primary d-none" id='offc' type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions"></button>
+            <div
+                className="offcanvas offcanvas-start"
+                data-bs-scroll="true"
+                tabIndex={-1}
+                id="offcanvasWithBothOptions"
+                aria-labelledby="offcanvasWithBothOptionsLabel"
+            >
+                <div className="offcanvas-header">
+                    <h5 className="offcanvas-title" id="offcanvasWithBothOptionsLabel">
+                        Notifications
+                    </h5>
+                    <button
+                        type="button"
+                        className={`btn-close text-reset`}
+                        data-bs-dismiss="offcanvas"
+                        aria-label="Close"
+                    />
                 </div>
-                <div class="offcanvas-body">
-                    <ul style={{ listStyleType: "none" }}>
+                <hr />
+                <div className="offcanvas-body">
+                    <div className="list-group">
                         {stations.map((charger) => (
-                            <li key={charger.id}>
-                                {charger.poi.name}
-                            </li>
-                        ))
-                        }
-                    </ul>
+                            <a
+                                key={charger.id}
+                                href={charger.url ? charger.url : "#"}
+                                className="list-group-item list-group-item-action list-group-item-info mb-1"
+                                aria-current="true"
+                                style={{ backgroundColor: "whitesmoke" }}
+                            >
+                                <div className="d-flex w-100 justify-content-between">
+                                    <h6 className="mb-1 fw-bold text-dark"><i className="fas fa-angle-right"></i>{charger.poi.name}</h6>
+                                    {/* <small className='text-dark'>{timeAgo.format(new Date(charger.createdAt))}</small> */}
+                                </div>
+                                <p className="mb-1 text-muted">{charger.desc}</p>
+                            </a>
+                        ))}
+                    </div>
                 </div>
             </div>
             <main>
