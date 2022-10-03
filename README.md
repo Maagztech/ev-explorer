@@ -1,3 +1,3 @@
 # ev-explorer
 
-Live URL : evexplorer.netlify.app
+Live URL : https://evexplorer.netlify.app
